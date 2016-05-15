@@ -1,3 +1,5 @@
+const DEFAULT_NUMBER_OF_ITEMS_PER_PAGE = 10;
+
 var authKeyGenerator = require('../utils/auth-key-generator')
 
 function UserDAO(database) {
@@ -7,7 +9,7 @@ function UserDAO(database) {
 
     this.getUsers = function(page, numberOfItemsPerPage, callback) {
         page = +(page || 0);
-        numberOfItemsPerPage = +(numberOfItemsPerPage || 10);
+        numberOfItemsPerPage = +(numberOfItemsPerPage || DEFAULT_NUMBER_OF_ITEMS_PER_PAGE);
 
         usersCollection.find()
             .sort({
