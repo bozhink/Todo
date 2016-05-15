@@ -1,44 +1,50 @@
 var usersController = function() {
 
-  function all(context) {
-    var users;
-    data.users.get()
-      .then(function(resUsers) {
-        users = resUsers;
-        return templates.get('users');
-      })
-      .then(function(template) {
-        context.$element().html(template(users));
-        $('.btn-add-friend').on('click', function() {
-          var id = $(this).parents('.user-box').attr('data-id');
-          data.friends.sentRequest(id);
-        });
-      });
-  }
+    function all(context) {
+        var users;
+        data.users.get()
+            .then(function(resUsers) {
+                users = resUsers;
+                return templates.get('users');
+            })
+            .then(function(template) {
+                context.$element().html(template(users));
+                $('.btn-add-friend').on('click', function() {
+                    var id = $(this).parents('.user-box').attr('data-id');
+                    data.friends.sentRequest(id);
+                });
+            })
+            .catch(function(err) {
+                toastr.error(JSON.stringify(err));
+            });;
+    }
 
-  function register(context) {
-    templates.get('register')
-      .then(function(template) {
-        context.$element().html(template());
+    function register(context) {
+        templates.get('register')
+            .then(function(template) {
+                context.$element().html(template());
 
-        $('#btn-register').on('click', function() {
-          var user = {
-            username: $('#tb-reg-username').val(),
-            password: $('#tb-reg-pass').val()
-          };
+                $('#btn-register').on('click', function() {
+                    var user = {
+                        username: $('#tb-reg-username').val(),
+                        password: $('#tb-reg-pass').val()
+                    };
 
-          data.users.register(user)
-            .then(function() {
-              toastr.success('User registered!');
-              context.redirect('#/');
-              document.location.reload(true);
+                    data.users.register(user)
+                        .then(function() {
+                            toastr.success('User registered!');
+                            context.redirect('#/');
+                            document.location.reload(true);
+                        })
+                        .catch(function(err) {
+                            toastr.error(JSON.stringify(err));
+                        });
+                });
             });
-        });
-      });
-  }
+    }
 
-  return {
-    all: all,
-    register: register
-  };
+    return {
+        all: all,
+        register: register
+    };
 }();
