@@ -1,12 +1,12 @@
-var express = require('express'),
-  bodyParser = require('body-parser'),
+var app, express = require('express'),
+  bodyParser = require('body-parser')
+  mongoClient = require('mongodb').MongoClient,
   low = require('lowdb');
 
-var app = express(),
-  db = low('data/data.json');
-
+var db = low('data/data.json');
 db._.mixin(require('underscore-db'));
 
+app = express();
 app.use(bodyParser.json());
 app.use(express.static('public'));
 

@@ -8,9 +8,10 @@ function get(id) {
     var index = (Math.random() * chars.length) | 0;
     authKey += chars[index];
   }
+
   return authKey;
 }
 
 module.exports = {
-  get:get
+  get: get
 };
