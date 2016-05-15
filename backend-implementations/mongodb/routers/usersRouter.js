@@ -1,6 +1,4 @@
 var express = require('express'),
-    idGenerator = require('../utils/id-generator')(),
-    authKeyGenerator = require('../utils/auth-key-generator'),
     UserDAO = require('../data/users').UserDAO;
 
 module.exports = function(db) {
@@ -19,8 +17,6 @@ module.exports = function(db) {
         })
         .post('/', function(req, res) {
             var user = req.body;
-            console.log(user);
-
             users.addUser(user, function(user) {
                 if (user == null) {
                     res.status(400)

@@ -35,7 +35,6 @@ function UserDAO(database) {
                 callback(null);
             } else {
                 usersCollection.insert({
-                    '_id': user.id,
                     'username': user.username,
                     'passHash': user.passHash,
                     'usernameLower': user.usernameLower,
