@@ -197,3 +197,6 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+
+# VSCode files
+.browse.VC.db*
