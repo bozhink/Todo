@@ -40,9 +40,11 @@ module.exports = function(db) {
     })
     .put('/auth', function(req, res) {
       var user = req.body;
+
       var dbUser = db('users').find({
         usernameLower: user.username.toLowerCase()
       });
+      
       if (!dbUser || dbUser.passHash !== user.passHash) {
         res.status(404)
           .json('Username or password is invalid');

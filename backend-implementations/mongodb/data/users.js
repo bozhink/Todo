@@ -30,7 +30,7 @@ function UserDAO(database) {
 
                 callback(users);
             });
-    }
+    };
 
     this.addUser = function(user, callback) {
         user.usernameLower = user.username.toLowerCase();
@@ -66,6 +66,26 @@ function UserDAO(database) {
                 });
             }
         });
+    };
+
+    this.authorizeUser = function(user, callback) {
+        if (!!user) {
+            throw new Error('User schould not be null.');
+        }
+
+        this.usersCollection.findOne({
+            'usernameLower': user.username.toLowerCase(),
+            'authKey': user.authKey
+        }, function(err, user) {
+            if (!!err) {
+                throw err;
+            }
+
+            callback({
+                username: user.username,
+                authKey: user.authKey
+            });
+        })
     }
 }
 
