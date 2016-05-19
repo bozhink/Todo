@@ -1,13 +1,15 @@
 var app, express = require('express'),
     bodyParser = require('body-parser'),
-    mongoClient = require('mongodb').MongoClient;
+    MongoClient = require('mongodb').MongoClient,
+    port = process.env.PORT || 3013;
 
 app = express();
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-mongoClient.connect('mongodb://localhost:27017/todos', function(err, db) {
-    var usersRouter = require('./routers/usersRouter')(db),
+MongoClient.connect('mongodb://localhost:27017/todos', function(err, db) {
+    var server,
+        usersRouter = require('./routers/usersRouter')(db),
         todosRouter = require('./routers/todosRouter')(db),
         eventsRouter = require('./routers/eventsRouter')(db),
         categoriesRouter = require('./routers/categoriesRouter')(db);
@@ -19,9 +21,8 @@ mongoClient.connect('mongodb://localhost:27017/todos', function(err, db) {
     app.use('/api/events', eventsRouter);
     app.use('/api/categories', categoriesRouter);
 
-    var port = process.env.PORT || 3013;
-
-    app.listen(port, function() {
-        console.log('Server is running at http://localhost:' + port);
-    })
+    server = app.listen(port, function() {
+        var port = server.address().port;
+        console.log('Server is running at http://localhost:%s', port);
+    });
 });
