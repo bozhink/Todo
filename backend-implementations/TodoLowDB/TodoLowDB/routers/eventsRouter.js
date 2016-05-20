@@ -1,18 +1,19 @@
 var express = require('express'),
-    uuid = require('uuid');
+    uuid = require('uuid'),
+    EventDAO = require('../data/events').EventDAO;
 
 require('../polyfills/array');
 
 module.exports = function (db) {
+    'use strict';
+
     var router = express.Router(),
-        usersCollection = db('users');
+        usersCollection = db('users'),
+        events = new EventDAO(db);
 
     router
         .get('/', function (req, res) {
-            var events,
-                user = req.user,
-                now = new Date(),
-                indicesToRemove = [];
+            var user = req.user;
 
             if (!user) {
                 res.status(401)
@@ -20,48 +21,10 @@ module.exports = function (db) {
                 return;
             }
 
-            user.events = user.events || [];
-            user.events.forEach(function (event, index) {
-                var date = new Date(event.date);
-                if (date - now <= 0) {
-                    indicesToRemove.push(index);
-                }
-            });
-
-            indicesToRemove.forEach(function (indexToRemove) {
-                user.events.splice(indexToRemove, 1);
-            });
-
-            user.events.sort(function (e1, e2) {
-                return new Date(e1.date) - new Date(e2.date);
-            });
-
-            events = user.events || [];
-            events = events.map(function (dbEvent) {
-                var event = {
-                    id: dbEvent.id,
-                    title: dbEvent.title,
-                    category: dbEvent.category,
-                    description: dbEvent.description,
-                    date: dbEvent.date,
-                    creator: usersCollection.find({
-                        id: dbEvent.creatorId
-                    }).username,
-                    users: dbEvent.users.map(function (userId) {
-                        return {
-                            id: userId,
-                            username: usersCollection.find({
-                                id: userId
-                            })
-                        };
-                    })
-                };
-
-                return event;
-            });
-
-            res.json({
-                result: events
+            events.getEvents(user, function (events) {
+                res.json({
+                    result: events
+                });
             });
         })
         .post('/', function (req, res) {
