@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="data\categories.js" />
     <Compile Include="data\users.js" />
     <Compile Include="polyfills\array.js" />
     <Compile Include="public\app.js" />

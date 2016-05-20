@@ -1,45 +1,24 @@
 var express = require('express'),
-    _ = require('lodash');
-
-require('../polyfills/array');
+    CategoryDAO = require('../data/categories').CategoryDAO;
 
 module.exports = function (db) {
+    'use strict';
+
     var router = express.Router(),
-        usersCollection = db('users');
+        categories = new CategoryDAO(db);
 
     router.get('/', function (req, res) {
-        var categories, user = req.user;
+        var user = req.user;
         if (!user) {
             res.status(401)
                 .json('Not authorized User');
             return;
         }
 
-        categories = usersCollection.map(function (user) {
-            var todoCategories = [],
-                eventCategories = [];
-
-            if (user.todos) {
-                todoCategories = user.todos.map((todo) => todo.category);
-            }
-
-            if (user.events) {
-                eventCategories = user.events.map((event) => event.category);
-            }
-
-            return todoCategories.concat(eventCategories);
-        });
-
-        categories = _.chain(categories)
-            .flatten(categories, true)
-            .sortBy(function (cat) {
-                return cat.toLowerCase();
-            })
-            .uniq()
-            .value();
-
-        res.json({
-            result: categories
+        categories.getAllCategories(function (categories) {
+            res.json({
+                result: categories
+            });
         });
     });
 
