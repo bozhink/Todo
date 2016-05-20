@@ -5,7 +5,6 @@ module.exports = function (db) {
     'use strict';
 
     var router = express.Router(),
-        usersCollection = db('users'),
         users = new UserDAO(db);
 
     router
@@ -15,7 +14,7 @@ module.exports = function (db) {
 
             users.getUsers(page, size, function (users) {
                 res.json({
-                    result: users || []
+                    result: users
                 });
             });
         })
@@ -35,25 +34,17 @@ module.exports = function (db) {
             });
         })
         .put('/auth', function (req, res) {
-            var dbUser, user = req.body || {};
-            user.passHash = user.passHash || undefined;
-            user.usernameLower = (user.username || '').toLowerCase();
-
-            dbUser = usersCollection.find({
-                usernameLower: user.usernameLower
-            });
-
-            if (user.passHash === undefined || user.usernameLower === '' || !dbUser || dbUser.passHash !== user.passHash) {
-                res.status(404)
-                    .json('Username or password is invalid');
-                return;
-            }
-
-            res.json({
-                result: {
-                    username: dbUser.username,
-                    authKey: dbUser.authKey
+            var user = req.body || {};
+            users.authorizeUser(user, function (user, err) {
+                if (!!err || !user) {
+                    res.status(400)
+                        .json(JSON.stringify(err));
+                    return;
                 }
+
+                res.json({
+                    result: user
+                });
             });
         });
 

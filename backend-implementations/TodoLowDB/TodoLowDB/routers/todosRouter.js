@@ -67,6 +67,8 @@ module.exports = function (db) {
             todo.text = (typeof update.text === 'undefined') ? todo.text : update.text;
             todo.state = (typeof update.state === 'undefined') ? todo.state : update.state;
 
+            db.write();
+
             res.json({
                 result: todo
             });

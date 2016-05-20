@@ -63,10 +63,8 @@ function UserDAO(db) {
         }
 
         callback({
-            result: {
-                username: dbUser.username,
-                authKey: dbUser.authKey
-            }
+            username: dbUser.username,
+            authKey: dbUser.authKey
         });
     }
 
