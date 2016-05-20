@@ -84,7 +84,30 @@
       "passHash": "018f4d7f06cb8626e1756452581373e05ae41c56",
       "id": "df460132-9841-4c4b-835d-1868d6e93d1e",
       "usernameLower": "xxx",
-      "authKey": "df460132-9841-4c4b-835d-1868d6e93d1eTodtv+gIH^m(UR(Gk+TuaZ=h"
+      "authKey": "df460132-9841-4c4b-835d-1868d6e93d1eTodtv+gIH^m(UR(Gk+TuaZ=h",
+      "events": []
+    },
+    {
+      "username": "zzz",
+      "passHash": "984ff6ee7c78078d4cb1ca08255303fb8741d986",
+      "id": "c7d89a65-59f6-462d-a503-79d31180d5db",
+      "usernameLower": "zzz",
+      "authKey": "c7d89a65-59f6-462d-a503-79d31180d5dbNhy$MVXGrlX(uPG$VupoYuN+",
+      "events": [],
+      "todos": [
+        {
+          "id": "bebfefd8-89dc-4d53-b0bf-1b634bef21fc",
+          "text": "sdfdfs",
+          "state": true,
+          "category": "sfsdf"
+        },
+        {
+          "id": "4aa51dc1-f954-4c68-b53e-74bdab32689c",
+          "text": "rte",
+          "state": false,
+          "category": "ert"
+        }
+      ]
     }
   ]
 }
