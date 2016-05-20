@@ -9,7 +9,7 @@ module.exports = function (app, db) {
 
     app.use(function (req, res, next) {
         var authKey = req.headers[AUTH_KEY_HEADER_NAME];
-        users.getUserByAuthKey(authKey, function (user) {
+        users.getUserByAuthKey(authKey, function (err, user) {
             req.user = user || null;
             next();
         });

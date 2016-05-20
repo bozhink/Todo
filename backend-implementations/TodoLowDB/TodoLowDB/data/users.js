@@ -18,7 +18,7 @@ function UserDAO(db) {
             .take(size)
             .value();
 
-        callback(users || []);
+        callback(null, users || []);
     }
 
     function addUser(user, callback) {
@@ -30,7 +30,7 @@ function UserDAO(db) {
             user.usernameLower = user.username.toLowerCase();
             user.authKey = authKeyGenerator.get(user.id);
         } catch (e) {
-            callback(null, 'User is invalid.');
+            callback('User is invalid', null);
             return;
         }
 
@@ -39,13 +39,13 @@ function UserDAO(db) {
         });
 
         if (dbUser) {
-            callback(null, 'Username is already taken.');
+            callback('Username is already taken.', null);
             return;
         }
 
         usersCollection.push(user);
 
-        callback(user);
+        callback(null, user);
     }
 
     function authorizeUser(user, callback) {
@@ -59,10 +59,10 @@ function UserDAO(db) {
         });
 
         if (user.passHash === undefined || user.usernameLower === '' || !dbUser || dbUser.passHash !== user.passHash) {
-            callback(null, 'Username or password is invalid');
+            callback('Username or password is invalid', null);
         }
 
-        callback({
+        callback(null, {
             username: dbUser.username,
             authKey: dbUser.authKey
         });
@@ -73,7 +73,7 @@ function UserDAO(db) {
             authKey: authKey
         });
 
-        callback(user || null);
+        callback(null, user || null);
     }
 
     return {

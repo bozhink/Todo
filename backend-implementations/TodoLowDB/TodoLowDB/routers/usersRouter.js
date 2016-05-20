@@ -12,7 +12,13 @@ module.exports = function (db) {
             var page = +(req.query.page || 0),
                 size = +(req.query.size || 10);
 
-            users.getUsers(page, size, function (users) {
+            users.getUsers(page, size, function (err, users) {
+                if (!!err || !users) {
+                    res.status(400)
+                        .json(err);
+                    return;
+                }
+
                 res.json({
                     result: users
                 });
@@ -20,10 +26,10 @@ module.exports = function (db) {
         })
         .post('/', function (req, res) {
             var user = req.body || {};
-            users.addUser(user, function (user, err) {
+            users.addUser(user, function (err, user) {
                 if (!!err || !user) {
                     res.status(400)
-                        .json(JSON.stringify(err));
+                        .json(err);
                     return;
                 }
 
@@ -35,10 +41,10 @@ module.exports = function (db) {
         })
         .put('/auth', function (req, res) {
             var user = req.body || {};
-            users.authorizeUser(user, function (user, err) {
+            users.authorizeUser(user, function (err, user) {
                 if (!!err || !user) {
                     res.status(400)
-                        .json(JSON.stringify(err));
+                        .json(err);
                     return;
                 }
 
