@@ -1,0 +1,20 @@
+{
+  "name": "todo-lowdb",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "postinstall": "./node_modules/bower/bin/bower install"
+  },
+  "author": "Bozhin Karaivanov",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "bower": "^1.7.9",
+    "express": "^4.13.4",
+    "lodash": "^4.12.0",
+    "lowdb": "^0.12.5",
+    "underscore-db": "^0.10.0"
+  }
+}
