@@ -33,6 +33,7 @@
     <Compile Include="app.js" />
     <Compile Include="polyfills\array.js" />
     <Compile Include="public\app.js" />
+    <Compile Include="public\app\constants.js" />
     <Compile Include="public\app\data.js" />
     <Compile Include="public\app\json-requester.js" />
     <Compile Include="public\app\templates.js" />

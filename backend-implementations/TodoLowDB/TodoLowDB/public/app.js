@@ -17,6 +17,9 @@
 
         if (data.users.hasUser()) {
             $('#container-sign-in').addClass('hidden');
+
+            $('#container-sign-out').removeClass('hidden');
+            $('#user-name-label').html(localStorage.getItem(LOCAL_STORAGE_USERNAME_KEY));
             $('#btn-sign-out').on('click', function (e) {
                 e.preventDefault();
                 data.users.signOut()
@@ -26,7 +29,10 @@
                     });
             });
         } else {
+            $('#user-name-label').html('');
             $('#container-sign-out').addClass('hidden');
+
+            $('#container-sign-in').removeClass('hidden');
             $('#btn-sign-in').on('click', function (e) {
                 e.preventDefault();
                 var user = {
