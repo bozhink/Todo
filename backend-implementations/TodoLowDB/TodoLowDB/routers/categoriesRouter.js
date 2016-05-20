@@ -15,7 +15,12 @@ module.exports = function (db) {
             return;
         }
 
-        categories.getAllCategories(function (categories) {
+        categories.getAllCategories(function (err, categories) {
+            if (!!err) {
+                res.status(400)
+                    .json(err);
+            }
+
             res.json({
                 result: categories
             });

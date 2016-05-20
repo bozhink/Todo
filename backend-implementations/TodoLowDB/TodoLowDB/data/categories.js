@@ -27,7 +27,7 @@ function CategoryDAO(db) {
             .uniq()
             .value();
 
-        callback(categories);
+        callback(null, categories);
     }
 
     return {
