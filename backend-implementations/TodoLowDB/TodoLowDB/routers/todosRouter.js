@@ -1,6 +1,5 @@
 var express = require('express'),
-    uuid = require('uuid'),
-    idGenerator = require('../utils/id-generator')();
+    uuid = require('uuid');
 
 require('../polyfills/array');
 
@@ -30,7 +29,7 @@ module.exports = function (db) {
             }
 
             todo = {
-                id: idGenerator.next(),
+                id: uuid(),
                 text: req.body.text,
                 state: !!req.body.state || false,
                 category: req.body.category || 'uncategorized'
@@ -52,7 +51,7 @@ module.exports = function (db) {
                 return;
             }
 
-            id = +req.params.id;
+            id = req.params.id;
             todo = user.todos.find(function (dbTodo) {
                 return dbTodo.id === id;
             });
@@ -68,11 +67,10 @@ module.exports = function (db) {
             todo.text = (typeof update.text === 'undefined') ? todo.text : update.text;
             todo.state = (typeof update.state === 'undefined') ? todo.state : update.state;
 
-            db.save();
-
             res.json({
                 result: todo
             });
         });
+
     return router;
 };
