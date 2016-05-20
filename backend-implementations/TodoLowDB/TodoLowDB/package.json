@@ -15,6 +15,7 @@
     "express": "^4.13.4",
     "lodash": "^4.12.0",
     "lowdb": "^0.12.5",
-    "underscore-db": "^0.10.0"
+    "underscore-db": "^0.10.0",
+    "uuid": "^2.0.2"
   }
 }

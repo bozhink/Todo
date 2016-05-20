@@ -54,6 +54,9 @@ var data = (function () {
     }
 
     function usersGet() {
+
+        console.log('here');
+
         return jsonRequester.get('api/users')
             .then(function (res) {
                 return res.result;

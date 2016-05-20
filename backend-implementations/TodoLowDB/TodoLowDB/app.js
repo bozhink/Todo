@@ -4,7 +4,8 @@ var server,
     bodyParser = require('body-parser'),
     app = express(),
     low = require('lowdb'),
-    db = low('data/data.json');
+    storage = require('lowdb/file-sync'),
+    db = low('data/data.json', { storage });
 
 db._.mixin(require('underscore-db'));
 
