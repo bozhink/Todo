@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Compile Include="data\users.js" />
     <Compile Include="polyfills\array.js" />
     <Compile Include="public\app.js" />
     <Compile Include="public\app\constants.js" />
@@ -52,6 +53,7 @@
     <Compile Include="utils\id-generator.js" />
     <Content Include="bower.json" />
     <Content Include="data\data.json" />
+    <Content Include="JSLintNet.json" />
     <Content Include="LICENSE" />
     <Content Include="package.json" />
     <Content Include="public\css\main.css" />

@@ -1,24 +1,24 @@
 var express = require('express'),
     uuid = require('uuid'),
-    authKeyGenerator = require('../utils/auth-key-generator');
+    authKeyGenerator = require('../utils/auth-key-generator'),
+    UserDAO = require('../data/users').UserDAO;
 
 module.exports = function (db) {
+    'use strict';
+
     var router = express.Router(),
-        usersCollection = db('users');
+        usersCollection = db('users'),
+        users = new UserDAO(db);
 
     router
         .get('/', function (req, res) {
             var page = +(req.query.page || 0),
                 size = +(req.query.size || 10);
 
-            var users = usersCollection.chain()
-                .sortBy('username')
-                .slice(page * size)
-                .take(size)
-                .value();
-
-            res.json({
-                result: users || []
+            users.getUsers(page, size, function (users) {
+                res.json({
+                    result: users || []
+                });
             });
         })
         .post('/', function (req, res) {
@@ -60,10 +60,7 @@ module.exports = function (db) {
                 usernameLower: user.usernameLower
             });
 
-            if (user.passHash === undefined ||
-                user.usernameLower === '' ||
-                !dbUser ||
-                dbUser.passHash !== user.passHash) {
+            if (user.passHash === undefined || user.usernameLower === '' || !dbUser || dbUser.passHash !== user.passHash) {
                 res.status(404)
                     .json('Username or password is invalid');
                 return;
