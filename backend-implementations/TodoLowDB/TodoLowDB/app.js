@@ -1,9 +1,10 @@
-var express = require('express'),
-  bodyParser = require('body-parser'),
-  low = require('lowdb');
-
-var app = express(),
-  db = low('data/data.json');
+var server,
+    port = process.env.PORT || 3013,
+    express = require('express'),
+    bodyParser = require('body-parser'),
+    app = express(),
+    low = require('lowdb'),
+    db = low('data/data.json');
 
 db._.mixin(require('underscore-db'));
 
@@ -22,8 +23,7 @@ app.use('/api/todos', todosRouter);
 app.use('/api/events', eventsRouter);
 app.use('/api/categories', categoriesRouter);
 
-var port = process.env.PORT || 3013;
-
-app.listen(port, function() {
-  console.log('Server is running at http://localhost:' + port);
+server = app.listen(port, function () {
+    var port = server.address().port;
+    console.log('Server is running at http://localhost:%s', port);
 });
