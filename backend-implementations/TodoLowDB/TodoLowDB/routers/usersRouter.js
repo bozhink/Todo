@@ -1,6 +1,4 @@
 var express = require('express'),
-    uuid = require('uuid'),
-    authKeyGenerator = require('../utils/auth-key-generator'),
     UserDAO = require('../data/users').UserDAO;
 
 module.exports = function (db) {
@@ -22,34 +20,19 @@ module.exports = function (db) {
             });
         })
         .post('/', function (req, res) {
-            var dbUser, user = req.body || {};
+            var user = req.body || {};
+            users.addUser(user, function (user, err) {
+                if (!!err || !user) {
+                    res.status(400)
+                        .json(JSON.stringify(err));
+                    return;
+                }
 
-            try {
-                user.id = uuid();
-                user.usernameLower = user.username.toLowerCase();
-                user.authKey = authKeyGenerator.get(user.id);
-            } catch (e) {
-                res.status(400)
-                    .json('User is invalid.');
-                return;
-            }
-
-            dbUser = usersCollection.find({
-                usernameLower: user.usernameLower
+                res.status(201)
+                    .json({
+                        result: user
+                    });
             });
-
-            if (dbUser) {
-                res.status(400)
-                    .json('Username is already taken.');
-                return;
-            }
-
-            usersCollection.push(user);
-
-            res.status(201)
-                .json({
-                    result: user
-                });
         })
         .put('/auth', function (req, res) {
             var dbUser, user = req.body || {};
