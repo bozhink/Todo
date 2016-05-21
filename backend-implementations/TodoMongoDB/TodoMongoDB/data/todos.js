@@ -8,6 +8,15 @@ function TodoDAO(db) {
 
     var usersCollection = db.collection('users');
 
+    function mapDbTodoToResponseModel(todo) {
+        return {
+            id: todo._id,
+            text: todo.text,
+            state: todo.state,
+            category: todo.category
+        };
+    }
+
     function getTodos(user, callback) {
         var todos;
         if (!user) {
@@ -16,14 +25,7 @@ function TodoDAO(db) {
         }
 
         todos = user.todos || [];
-        callback(null, todos.map(function(todo) {
-            return {
-                id: todo._id,
-                text: todo.text,
-                state: todo.state,
-                category: todo.category
-            };
-        }));
+        callback(null, todos.map(mapDbTodoToResponseModel));
     }
 
     function addTodo(user, todo, callback) {
