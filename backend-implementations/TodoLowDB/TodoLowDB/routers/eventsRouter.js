@@ -48,6 +48,7 @@ module.exports = function (db) {
                 if (!!err || !event) {
                     res.status(400)
                         .json(err);
+                    return;
                 }
 
                 res.status(201)
