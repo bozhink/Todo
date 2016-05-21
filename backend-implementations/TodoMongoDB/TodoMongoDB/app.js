@@ -1,33 +1,13 @@
 var express = require('express'),
     app = express(),
-    engines = require('consolidate'),
     bodyParser = require('body-parser'),
     MongoClient = require('mongodb').MongoClient,
     assert = require('assert');
 
-app.engine('html', engines.nunjucks);
-app.set('view engine', 'html');
-app.set('views', __dirname + '/views');
-
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
 app.use(bodyParser.json());
 
 app.use(express.static('public'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
-app.use('/css', express.static(__dirname + '/css'));
-
-function errorHandler(err, req, res, next) {
-    console.error(err.message);
-    console.error(err.stack);
-    res.status(500)
-        .render('error-template', {
-            error: err
-        });
-}
-
-app.use(errorHandler);
 
 MongoClient.connect('mongodb://localhost:27017/todos', function(err, db) {
     assert.equal(null, err);
@@ -40,10 +20,6 @@ MongoClient.connect('mongodb://localhost:27017/todos', function(err, db) {
         categoriesRouter = require('./routers/categoriesRouter')(db);
 
     require('./utils/authorized-user')(app, db);
-
-    app.get('/', function (req, res) {
-        res.json({});
-    });
 
     app.use('/api/users', usersRouter);
     app.use('/api/todos', todosRouter);
