@@ -1,30 +1,53 @@
-var server,
-    port = process.env.PORT || 3013,
-    express = require('express'),
-    bodyParser = require('body-parser'),
+var express = require('express'),
     app = express(),
-    low = require('lowdb'),
-    storage = require('lowdb/file-sync'),
-    db = low('data/data.json', { storage });
+    engines = require('consolidate'),
+    bodyParser = require('body-parser'),
+    MongoClient = require('mongodb').MongoClient,
+    assert = require('assert');
 
-db._.mixin(require('underscore-db'));
+app.engine('html', engines.nunjucks);
+app.set('view engine', 'html');
+app.set('views', __dirname + '/views');
 
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 app.use(bodyParser.json());
-app.use(express.static('public'));
 
-var usersRouter = require('./routers/usersRouter')(db);
-var todosRouter = require('./routers/todosRouter')(db);
-var eventsRouter = require('./routers/eventsRouter')(db);
-var categoriesRouter = require('./routers/categoriesRouter')(db);
+app.use(express.static(__dirname + 'public'));
+app.use('/bower_components', express.static(__dirname + '/bower_components'));
+app.use('/css', express.static(__dirname + '/css'));
 
-require('./utils/authorized-user')(app, db);
+function errorHandler(err, req, res, next) {
+    console.error(err.message);
+    console.error(err.stack);
+    res.status(500)
+        .render('error-template', {
+            error: err
+        });
+}
 
-app.use('/api/users', usersRouter);
-app.use('/api/todos', todosRouter);
-app.use('/api/events', eventsRouter);
-app.use('/api/categories', categoriesRouter);
+app.use(errorHandler);
 
-server = app.listen(port, function () {
-    var port = server.address().port;
-    console.log('Server is running at http://localhost:%s', port);
+MongoClient.connect('mongodb://localhost:27017/video', function(err, db) {
+    assert.equal(null, err);
+    console.log('Successfully connected to MongoDB.');
+
+    var server, port = process.env.PORT || 3013,
+        usersRouter = require('./routers/usersRouter')(db),
+        todosRouter = require('./routers/todosRouter')(db),
+        eventsRouter = require('./routers/eventsRouter')(db),
+        categoriesRouter = require('./routers/categoriesRouter')(db);
+
+    require('./utils/authorized-user')(app, db);
+
+    app.use('/api/users', usersRouter);
+    app.use('/api/todos', todosRouter);
+    app.use('/api/events', eventsRouter);
+    app.use('/api/categories', categoriesRouter);
+
+    server = app.listen(port, function() {
+        var port = server.address().port;
+        console.log('Server is running at http://localhost:%s', port);
+    });
 });
