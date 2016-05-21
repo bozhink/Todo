@@ -1,13 +1,13 @@
 var homeController = function() {
+    function all(context) {
+        templates.get('home')
+            .then(function(template) {
+                context.$element().html(template());
+            })
+            .catch(controllerHelpers.catchError);
+    }
 
-  function all(context) {
-    templates.get('home')
-      .then(function(template) {
-        context.$element().html(template());
-      });
-  }
-
-  return {
-    all: all
-  };
+    return {
+        all: all
+    };
 }();

@@ -1,5 +1,4 @@
 var usersController = function() {
-
     function all(context) {
         var users;
         data.users.get()
@@ -14,9 +13,7 @@ var usersController = function() {
                     data.friends.sentRequest(id);
                 });
             })
-            .catch(function(err) {
-                toastr.error(JSON.stringify(err));
-            });;
+            .catch(controllerHelpers.catchError);
     }
 
     function register(context) {
@@ -36,11 +33,10 @@ var usersController = function() {
                             context.redirect('#/');
                             document.location.reload(true);
                         })
-                        .catch(function(err) {
-                            toastr.error(JSON.stringify(err));
-                        });
+                        .catch(controllerHelpers.catchError);
                 });
-            });
+            })
+            .catch(controllerHelpers.catchError);
     }
 
     return {

@@ -1,8 +1,4 @@
-const LOCAL_STORAGE_USERNAME_KEY = 'signed-in-user-username',
-    LOCAL_STORAGE_AUTHKEY_KEY = 'signed-in-user-auth-key';
-
-var data = (function() {
-
+var data = (function () {
     /* Users */
 
     function register(user) {
@@ -12,16 +8,15 @@ var data = (function() {
         };
 
         return jsonRequester.post('api/users', {
-                data: reqUser
-            })
-            .then(function(resp) {
-                var user = resp.result;
-                localStorage.setItem(LOCAL_STORAGE_USERNAME_KEY, user.username);
-                localStorage.setItem(LOCAL_STORAGE_AUTHKEY_KEY, user.authKey);
-                return {
-                    username: user.username
-                };
-            });
+            data: reqUser
+        }).then(function (resp) {
+            var user = resp.result;
+            localStorage.setItem(LOCAL_STORAGE_USERNAME_KEY, user.username);
+            localStorage.setItem(LOCAL_STORAGE_AUTHKEY_KEY, user.authKey);
+            return {
+                username: resp.result.username
+            };
+        });
     }
 
     function signIn(user) {
@@ -35,7 +30,7 @@ var data = (function() {
         };
 
         return jsonRequester.put('api/users/auth', options)
-            .then(function(resp) {
+            .then(function (resp) {
                 var user = resp.result;
                 localStorage.setItem(LOCAL_STORAGE_USERNAME_KEY, user.username);
                 localStorage.setItem(LOCAL_STORAGE_AUTHKEY_KEY, user.authKey);
@@ -44,12 +39,12 @@ var data = (function() {
     }
 
     function signOut() {
-        var promise = new Promise(function(resolve, reject) {
+        var promise = new Promise(function (resolve, reject) {
             localStorage.removeItem(LOCAL_STORAGE_USERNAME_KEY);
             localStorage.removeItem(LOCAL_STORAGE_AUTHKEY_KEY);
             resolve();
         });
-        
+
         return promise;
     }
 
@@ -59,8 +54,11 @@ var data = (function() {
     }
 
     function usersGet() {
+
+        console.log('here');
+
         return jsonRequester.get('api/users')
-            .then(function(res) {
+            .then(function (res) {
                 return res.result;
             });
     }
@@ -72,8 +70,9 @@ var data = (function() {
                 'x-auth-key': localStorage.getItem(LOCAL_STORAGE_AUTHKEY_KEY)
             }
         };
+
         return jsonRequester.get('api/todos', options)
-            .then(function(res) {
+            .then(function (res) {
                 return res.result;
             });
     }
@@ -87,7 +86,7 @@ var data = (function() {
         };
 
         return jsonRequester.post('api/todos', options)
-            .then(function(resp) {
+            .then(function (resp) {
                 return resp.result;
             });
     }
@@ -100,7 +99,7 @@ var data = (function() {
             }
         };
         return jsonRequester.put('api/todos/' + id, options)
-            .then(function(resp) {
+            .then(function (resp) {
                 return resp.result;
             });
     }
@@ -114,7 +113,7 @@ var data = (function() {
             }
         };
         return jsonRequester.get('api/events', options)
-            .then(function(res) {
+            .then(function (res) {
                 return res.result;
             });
     }
@@ -128,11 +127,10 @@ var data = (function() {
         };
 
         return jsonRequester.post('api/events', options)
-            .then(function(resp) {
+            .then(function (resp) {
                 return resp.result;
             });
     }
-
 
     /* Categories */
     function categoriesGet() {
@@ -143,8 +141,7 @@ var data = (function() {
         };
 
         return jsonRequester.get('api/categories', options)
-            .then(function(res) {
-                console.log('THERE!');
+            .then(function (res) {
                 return res.result;
             });
     }
@@ -170,4 +167,4 @@ var data = (function() {
             get: categoriesGet
         },
     };
-}());
+} ());

@@ -1,5 +1,4 @@
 var notificationsController = (function() {
-
     function all(context) {
         var notifications;
         data.notifications.get()
@@ -16,12 +15,11 @@ var notificationsController = (function() {
                     data.friends.confirm(senderId)
                         .then(function(msg) {
                             toastr.success(msg.message);
-                        });
+                        })
+                        .catch(controllerHelpers.catchError);;
                 });
             })
-            .catch(function(err) {
-                toastr.error(JSON.stringify(err));
-            });;
+            .catch(controllerHelpers.catchError);
     }
 
     return {

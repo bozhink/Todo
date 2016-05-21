@@ -1,8 +1,6 @@
 var todosController = (function() {
-
     function all(context) {
-        var todos;
-        var category = context.params.category || null;
+        var todos, category = context.params.category || null;
         data.todos.get()
             .then(function(resTodos) {
                 todos = _.chain(resTodos)
@@ -26,13 +24,11 @@ var todosController = (function() {
                         state: isChecked
                     }).then(function(todo) {
                         toastr.clear();
-                        toastr.error(`TODO ${todo.text} updated!`);
+                        toastr.info(`TODO ${todo.text} is updated!`);
                     });
                 });
             })
-            .catch(function(err) {
-                toastr.error(JSON.stringify(err));
-            });
+            .catch(controllerHelpers.catchError);
     }
 
     function add(context) {
@@ -56,12 +52,11 @@ var todosController = (function() {
                         .then(function(todo) {
                             toastr.success(`TODO "${todo.text}" added!`);
                             context.redirect('#/todos');
-                        });
+                        })
+                        .catch(controllerHelpers.catchError);
                 });
             })
-            .catch(function(err) {
-                toastr.error(JSON.stringify(err));
-            });
+            .catch(controllerHelpers.catchError);
     }
 
     return {
