@@ -1,0 +1,11 @@
+﻿{
+  "version": "2.2.2",
+  "ignore": [],
+  "options": {
+    "browser": true,
+    "es6": true,
+    "multivar": true,
+    "node": true
+  },
+  "globalVariables": []
+}
