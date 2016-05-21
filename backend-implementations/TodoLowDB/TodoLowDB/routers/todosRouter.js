@@ -1,23 +1,32 @@
 var express = require('express'),
-    uuid = require('uuid');
+    uuid = require('uuid'),
+    TodoDAO = require('../data/todos').TodoDAO;
 
 require('../polyfills/array');
 
 module.exports = function (db) {
-    var router = express.Router();
+    var router = express.Router(),
+        todos = new TodoDAO(db);
 
     router
         .get('/', function (req, res) {
-            var todos, user = req.user;
+            var user = req.user;
             if (!user) {
                 res.status(401)
                     .json('Not authorized User');
                 return;
             }
 
-            todos = user.todos;
-            res.json({
-                result: todos
+            todos.getTodos(user, function (err, todos) {
+                if (!!err) {
+                    res.status(400)
+                        .json(err);
+                    return;
+                }
+
+                res.json({
+                    result: todos
+                });
             });
         })
         .post('/', function (req, res) {
