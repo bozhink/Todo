@@ -200,3 +200,4 @@ ModelManifest.xml
 
 # VSCode files
 .browse.VC.db*
+.ntvs_analysis.dat
