@@ -3,31 +3,45 @@
 function CategoryDAO(db) {
     'use strict';
 
-    var usersCollection = db('users');
+    var usersCollection = db.collection('users'),
+        eventsCollection = db.collection('events');
 
     function getAllCategories(callback) {
-        var categories = usersCollection.map(function (user) {
-            var todoCategories = [],
-                eventCategories = [];
+        eventsCollection
+            .aggregate([{
+                '$group': {
+                    '_id': '$category'
+                }
+            }])
+            .toArray(function(err, eventCategories) {
+                if (!!err) {
+                    callback(err, null);
+                    return;
+                }
 
-            if (user.todos) {
-                todoCategories = user.todos.map((todo) => todo.category);
-            }
+                usersCollection
+                    .aggregate([{
+                        '$unwind': '$todos'
+                    }, {
+                        '$group': {
+                            '_id': '$todos.category'
+                        }
+                    }])
+                    .toArray(function(err, todoCategories) {
+                        var categories;
+                        if (!!err) {
+                            callback(err, null);
+                            return;
+                        }
 
-            if (user.events) {
-                eventCategories = user.events.map((event) => event.category);
-            }
+                        categories = _.chain(todoCategories.concat(eventCategories).map((g) => g._id) || [])
+                            .sortBy((category) => category.toLowerCase())
+                            .uniq()
+                            .value();
 
-            return todoCategories.concat(eventCategories);
-        });
-
-        categories = _.chain(categories)
-            .flatten(categories, true)
-            .sortBy((category) => category.toLowerCase())
-            .uniq()
-            .value();
-
-        callback(null, categories);
+                        callback(null, categories || []);
+                    })
+            });
     }
 
     return {
