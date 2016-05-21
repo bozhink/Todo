@@ -29,8 +29,8 @@ var eventsController = (function() {
                 $('#tb-event-time').timepicker();
 
                 $('#btn-event-add').on('click', function() {
-                    var user = $('#tb-event-users').val(),
-                        users = (!!user.trim()) ? [user] : [];
+                    var user = $('#tb-event-users').val().trim(),
+                        users = (!!user) ? user.split(/\s*[,;]\s*/g) : [];
 
                     var event = {
                         title: $('#tb-event-title').val(),
