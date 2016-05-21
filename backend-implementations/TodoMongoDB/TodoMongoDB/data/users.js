@@ -35,7 +35,7 @@ function UserDAO(db) {
         }
 
         usersCollection.findOne({
-            usernameLower: user.usernameLower
+            'usernameLower': user.usernameLower
         }, function(err, dbUser) {
             if (!!err) {
                 callback(err, null);
@@ -61,7 +61,7 @@ function UserDAO(db) {
         user.usernameLower = (user.username || '').toLowerCase();
 
         usersCollection.findOne({
-            usernameLower: user.usernameLower
+            'usernameLower': user.usernameLower
         }, function(err, dbUser) {
             if (!!err) {
                 callback(err, null);
@@ -82,7 +82,7 @@ function UserDAO(db) {
 
     function getUserByAuthKey(authKey, callback) {
         usersCollection.findOne({
-            authKey: authKey
+            'authKey': authKey
         }, function(err, user) {
             callback(err, user || null);
         });

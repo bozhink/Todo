@@ -5,60 +5,38 @@ require('../polyfills/array');
 function EventDAO(db) {
     'use strict';
 
-    var usersCollection = db('users');
+    var usersCollection = db.collection('users'),
+        eventsCollection = db.collection('events');
+
+    function mapEventToResponseModel(event) {
+        return {
+            id: event._id.toString(),
+            title: event.title,
+            category: event.category,
+            description: event.description,
+            date: event.date,
+        };
+    }
 
     function getEvents(user, callback) {
-        var events = [],
-            now = new Date(),
-            indicesToRemove = [];
+        var now = new Date();
 
         if (!user) {
-            callback('Not authorized User', events);
+            callback('Not authorized User', null);
             return;
         }
 
-        user.events = user.events || [];
-        user.events.forEach(function (event, index) {
-            var date = new Date(event.date);
-            if (date - now <= 0) {
-                indicesToRemove.push(index);
-            }
-        });
-
-        indicesToRemove.forEach((indexToRemove) => user.events.splice(indexToRemove, 1));
-
-        user.events.sort((e1, e2) => new Date(e1.date) - new Date(e2.date));
-
-        events = user.events || [];
-        events = events.map(function (dbEvent) {
-            var creator = usersCollection.find({
-                    id: dbEvent.creatorId
-                }),
-                users = dbEvent.users.map(function (userId) {
-                    var username = usersCollection.find({
-                        id: userId
-                    });
-
-                    return {
-                        id: userId,
-                        username: username
-                    };
-                });
-
-            var event = {
-                id: dbEvent.id,
-                title: dbEvent.title,
-                category: dbEvent.category,
-                description: dbEvent.description,
-                date: dbEvent.date,
-                creator: creator.username,
-                users: users
-            };
-
-            return event;
-        });
-
-        callback(null, events);
+        eventsCollection
+            .find({
+                'users': user._id.toString(),
+                'date': {
+                    '$gte': now
+                }
+            })
+            .toArray(function(err, events) {
+                events = events || [];
+                callback(err, events.map(mapEventToResponseModel));
+            });
     }
 
     function addEvent(user, event, callback) {
@@ -74,47 +52,41 @@ function EventDAO(db) {
         }
 
         dbEvent = {
-            id: uuid(),
             title: event.title,
             category: event.category || 'uncategorized',
             description: event.description,
             date: event.date,
-            creatorId: user.id
+            creatorId: user._id.toString()
         };
 
         event.usersUsernames = event.usersUsernames || [];
 
-        users = event.usersUsernames.map(function (username) {
-            return usersCollection.find({
-                usernameLower: username.toLowerCase()
+        usersCollection
+            .find({
+                'usernameLower': {
+                    '$in': event.usersUsernames
+                }
+            })
+            .toArray(function (err, users) {
+                users = users || [];
+                if (users.length !== event.usersUsernames.length) {
+                    callback('Invalid users added', null);
+                    return;
+                }
+
+                // Add user to users if not present
+                if (!users.find((u) => u._id.toString() === user._id.toString())) {
+                    users.push(user);
+                }
+
+                dbEvent.users = users.map((u) => u._id.toString());
+
+                eventsCollection.insert(dbEvent, {
+                    w: 1
+                }, function(err, result) {
+                    callback(err, mapEventToResponseModel(dbEvent));
+                })
             });
-        }).filter((user) => !!user);
-
-        if (users.length !== event.usersUsernames.length) {
-            callback('Invalid users added', null);
-            return;
-        }
-
-        // Add user to users if not present
-        if (!users.find((u) => u.id === user.id)) {
-            users.push(user);
-        }
-
-        dbEvent.users = users.map((user) => user.id);
-
-        users.forEach(function (user) {
-            user.events = user.events || [];
-            user.events.push(dbEvent);
-        });
-
-        db.write();
-
-        callback(null, {
-            title: dbEvent.title,
-            category: dbEvent.category,
-            description: dbEvent.description,
-            date: dbEvent.date,
-        });
     }
 
     return {
