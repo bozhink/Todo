@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.use(express.static(__dirname + 'public'));
+app.use(express.static('public'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 app.use('/css', express.static(__dirname + '/css'));
 
@@ -29,7 +29,7 @@ function errorHandler(err, req, res, next) {
 
 app.use(errorHandler);
 
-MongoClient.connect('mongodb://localhost:27017/video', function(err, db) {
+MongoClient.connect('mongodb://localhost:27017/todos', function(err, db) {
     assert.equal(null, err);
     console.log('Successfully connected to MongoDB.');
 
@@ -40,6 +40,10 @@ MongoClient.connect('mongodb://localhost:27017/video', function(err, db) {
         categoriesRouter = require('./routers/categoriesRouter')(db);
 
     require('./utils/authorized-user')(app, db);
+
+    app.get('/', function (req, res) {
+        res.json({});
+    });
 
     app.use('/api/users', usersRouter);
     app.use('/api/todos', todosRouter);

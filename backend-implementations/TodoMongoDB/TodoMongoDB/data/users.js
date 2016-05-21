@@ -1,79 +1,91 @@
 ﻿const DEFAULT_NUMBER_OF_ITEMS_PER_PAGE = 10;
 
-var uuid = require('uuid'),
-    authKeyGenerator = require('../utils/auth-key-generator');
+var authKeyGenerator = require('../utils/auth-key-generator'),
+    uuid = require('uuid');
 
 function UserDAO(db) {
     'use strict';
 
-    var usersCollection = db('users');
+    var usersCollection = db.collection('users');
 
     function getUsers(page, size, callback) {
         page = +(page || 0);
         size = +(size || DEFAULT_NUMBER_OF_ITEMS_PER_PAGE);
 
-        var users = usersCollection.chain()
-            .sortBy('username')
-            .slice(page * size)
-            .take(size)
-            .value();
-
-        callback(null, users || []);
+        usersCollection.find({})
+            .sort({
+                'username': 1
+            })
+            .skip(page * size)
+            .limit(size)
+            .toArray(function(err, users) {
+                callback(err, users || []);
+            });
     }
 
     function addUser(user, callback) {
-        var dbUser;
         user = user || {};
 
         try {
-            user.id = uuid();
             user.usernameLower = user.username.toLowerCase();
-            user.authKey = authKeyGenerator.get(user.id);
+            user.authKey = authKeyGenerator.get(uuid());
         } catch (e) {
             callback('User is invalid', null);
             return;
         }
 
-        dbUser = usersCollection.find({
+        usersCollection.findOne({
             usernameLower: user.usernameLower
+        }, function(err, dbUser) {
+            if (!!err) {
+                callback(err, null);
+                return;
+            }
+
+            if (!!dbUser) {
+                callback('Username is already taken.', null);
+                return;
+            }
+
+            usersCollection.insert(user, {
+                w: 1
+            }, function(err, result) {
+                callback(err, user);
+            });
         });
-
-        if (dbUser) {
-            callback('Username is already taken.', null);
-            return;
-        }
-
-        usersCollection.push(user);
-
-        callback(null, user);
     }
 
     function authorizeUser(user, callback) {
-        var dbUser;
         user = user || {};
         user.passHash = user.passHash || undefined;
         user.usernameLower = (user.username || '').toLowerCase();
 
-        dbUser = usersCollection.find({
+        usersCollection.findOne({
             usernameLower: user.usernameLower
-        });
+        }, function(err, dbUser) {
+            if (!!err) {
+                callback(err, null);
+                return;
+            }
 
-        if (user.passHash === undefined || user.usernameLower === '' || !dbUser || dbUser.passHash !== user.passHash) {
-            callback('Username or password is invalid', null);
-        }
+            if (user.passHash === undefined || user.usernameLower === '' || !dbUser || dbUser.passHash !== user.passHash) {
+                callback('Username or password is invalid', null);
+                return;
+            }
 
-        callback(null, {
-            username: dbUser.username,
-            authKey: dbUser.authKey
+            callback(null, {
+                username: dbUser.username,
+                authKey: dbUser.authKey
+            });
         });
     }
 
     function getUserByAuthKey(authKey, callback) {
-        var user = usersCollection.find({
+        usersCollection.findOne({
             authKey: authKey
+        }, function(err, user) {
+            callback(err, user || null);
         });
-
-        callback(null, user || null);
     }
 
     return {
