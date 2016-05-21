@@ -42,11 +42,42 @@ function TodoDAO(db) {
         user.todos.push(dbTodo);
         db.write();
 
-        callback(null, todo);
+        callback(null, {
+            text: dbTodo.text,
+            state: dbTodo.state,
+            category: dbTodo.category
+        });
     }
 
     function updateTodo(user, todo, callback) {
-        //
+        var dbTodo;
+        if (!user) {
+            callback('Not authorized User', null);
+            return;
+        }
+
+        if (!todo) {
+            callback('Cannot update null todo', null);
+            return;
+        }
+
+        dbTodo = user.todos.find((t) => t.id === todo.id);
+
+        if (!dbTodo) {
+            callback('Todo with such id does not exist in DB', null);
+            return;
+        }
+
+        dbTodo.text = (typeof todo.text === 'undefined') ? dbTodo.text : todo.text;
+        dbTodo.state = (typeof todo.state === 'undefined') ? dbTodo.state : todo.state;
+
+        db.write();
+
+        callback(null, {
+            text: dbTodo.text,
+            state: dbTodo.state,
+            category: dbTodo.category
+        });
     }
 
     return {

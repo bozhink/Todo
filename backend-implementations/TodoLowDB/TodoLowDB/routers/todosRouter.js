@@ -1,15 +1,12 @@
 var express = require('express'),
-    uuid = require('uuid'),
     TodoDAO = require('../data/todos').TodoDAO;
 
-require('../polyfills/array');
-
-module.exports = function (db) {
+module.exports = function(db) {
     var router = express.Router(),
         todos = new TodoDAO(db);
 
     router
-        .get('/', function (req, res) {
+        .get('/', function(req, res) {
             var user = req.user;
             if (!user) {
                 res.status(401)
@@ -17,7 +14,7 @@ module.exports = function (db) {
                 return;
             }
 
-            todos.getTodos(user, function (err, todos) {
+            todos.getTodos(user, function(err, todos) {
                 if (!!err) {
                     res.status(400)
                         .json(err);
@@ -29,7 +26,7 @@ module.exports = function (db) {
                 });
             });
         })
-        .post('/', function (req, res) {
+        .post('/', function(req, res) {
             var todo, user = req.user;
             if (!user) {
                 res.status(401)
@@ -43,7 +40,7 @@ module.exports = function (db) {
                 category: req.body.category || 'uncategorized'
             };
 
-            todos.addTodo(user, todo, function (err, todo) {
+            todos.addTodo(user, todo, function(err, todo) {
                 if (!!err) {
                     res.status(400)
                         .json(err);
@@ -56,7 +53,7 @@ module.exports = function (db) {
                     });
             });
         })
-        .put('/:id', function (req, res) {
+        .put('/:id', function(req, res) {
             var id, todo, update, user = req.user;
             if (!user) {
                 res.status(401)
@@ -64,26 +61,21 @@ module.exports = function (db) {
                 return;
             }
 
-            id = req.params.id;
-            todo = user.todos.find(function (dbTodo) {
-                return dbTodo.id === id;
-            });
+            todo = {
+                id: req.params.id,
+                text: req.body.text,
+                state: req.body.state
+            };
 
-            if (!todo) {
-                res.status(404)
-                    .json('Todo with such id does not exist in DB');
-                return;
-            }
+            todos.updateTodo(user, todo, function(err, todo) {
+                if (!!err) {
+                    res.status(404)
+                        .json(err);
+                }
 
-            update = req.body;
-
-            todo.text = (typeof update.text === 'undefined') ? todo.text : update.text;
-            todo.state = (typeof update.state === 'undefined') ? todo.state : update.state;
-
-            db.write();
-
-            res.json({
-                result: todo
+                res.json({
+                    result: todo
+                });
             });
         });
 

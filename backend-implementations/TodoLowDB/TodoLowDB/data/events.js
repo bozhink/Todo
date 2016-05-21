@@ -109,7 +109,12 @@ function EventDAO(db) {
 
         db.write();
 
-        callback(null, event);
+        callback(null, {
+            title: dbEvent.title,
+            category: dbEvent.category,
+            description: dbEvent.description,
+            date: dbEvent.date,
+        });
     }
 
     return {
