@@ -38,19 +38,23 @@ module.exports = function (db) {
             }
 
             todo = {
-                id: uuid(),
                 text: req.body.text,
                 state: !!req.body.state || false,
                 category: req.body.category || 'uncategorized'
             };
 
-            user.todos = user.todos || [];
-            user.todos.push(todo);
+            todos.addTodo(user, todo, function (err, todo) {
+                if (!!err) {
+                    res.status(400)
+                        .json(err);
+                    return;
+                }
 
-            res.status(201)
-                .json({
-                    result: todo
-                });
+                res.status(201)
+                    .json({
+                        result: todo
+                    });
+            });
         })
         .put('/:id', function (req, res) {
             var id, todo, update, user = req.user;

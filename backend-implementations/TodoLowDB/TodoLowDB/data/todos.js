@@ -20,7 +20,29 @@ function TodoDAO(db) {
     }
 
     function addTodo(user, todo, callback) {
-        //
+        var dbTodo;
+        if (!user) {
+            callback('Not authorized User', null);
+            return;
+        }
+
+        if (!todo) {
+            callback('Cannot add null todo', null);
+            return;
+        }
+
+        dbTodo = {
+            id: uuid(),
+            text: todo.text,
+            state: !!todo.state || false,
+            category: todo.category || 'uncategorized'
+        };
+
+        user.todos = user.todos || [];
+        user.todos.push(dbTodo);
+        db.write();
+
+        callback(null, todo);
     }
 
     function updateTodo(user, todo, callback) {

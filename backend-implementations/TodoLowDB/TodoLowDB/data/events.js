@@ -109,7 +109,7 @@ function EventDAO(db) {
 
         db.write();
 
-        callback(null, dbEvent);
+        callback(null, event);
     }
 
     return {
