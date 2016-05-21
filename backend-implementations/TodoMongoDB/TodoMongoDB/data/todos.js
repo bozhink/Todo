@@ -6,7 +6,7 @@ require('../polyfills/array');
 function TodoDAO(db) {
     'use strict';
 
-    var usersCollection = db('users');
+    var usersCollection = db.collection('users');
 
     function getTodos(user, callback) {
         var todos;
@@ -16,7 +16,14 @@ function TodoDAO(db) {
         }
 
         todos = user.todos || [];
-        callback(null, todos);
+        callback(null, todos.map(function(todo) {
+            return {
+                id: todo._id,
+                text: todo.text,
+                state: todo.state,
+                category: todo.category
+            };
+        }));
     }
 
     function addTodo(user, todo, callback) {
@@ -32,25 +39,33 @@ function TodoDAO(db) {
         }
 
         dbTodo = {
-            id: uuid(),
+            _id: uuid(),
             text: todo.text,
             state: !!todo.state || false,
             category: todo.category || 'uncategorized'
         };
 
-        user.todos = user.todos || [];
-        user.todos.push(dbTodo);
-        db.write();
-
-        callback(null, {
-            text: dbTodo.text,
-            state: dbTodo.state,
-            category: dbTodo.category
-        });
+        usersCollection.update({
+                '_id': user._id
+            }, {
+                "$push": {
+                    "todos": dbTodo
+                }
+            }, {
+                upsert: false,
+                w: 1
+            },
+            function(err, result) {
+                callback(err, {
+                    text: dbTodo.text,
+                    state: dbTodo.state,
+                    category: dbTodo.category
+                });
+            });
     }
 
     function updateTodo(user, todo, callback) {
-        var dbTodo;
+        var dbTodo, todos, responseTodo;
         if (!user) {
             callback('Not authorized User', null);
             return;
@@ -61,22 +76,32 @@ function TodoDAO(db) {
             return;
         }
 
-        dbTodo = user.todos.find((t) => t.id === todo.id);
-
+        todos = user.todos || [];
+        dbTodo = todos.find((t) => t._id === todo.id);
         if (!dbTodo) {
             callback('Todo with such id does not exist in DB', null);
             return;
         }
 
-        dbTodo.text = (typeof todo.text === 'undefined') ? dbTodo.text : todo.text;
-        dbTodo.state = (typeof todo.state === 'undefined') ? dbTodo.state : todo.state;
-
-        db.write();
-
-        callback(null, {
-            text: dbTodo.text,
-            state: dbTodo.state,
+        responseTodo = {
+            text: (typeof todo.text === 'undefined') ? dbTodo.text : todo.text,
+            state: (typeof todo.state === 'undefined') ? dbTodo.state : todo.state,
             category: dbTodo.category
+        };
+
+        usersCollection.update({
+            '_id': user._id,
+            'todos._id': dbTodo._id
+        }, {
+            '$set': {
+                'todos.$.text': responseTodo.text,
+                'todos.$.state': responseTodo.state
+            }
+        }, {
+            upsert: false,
+            w: 1
+        }, function(err, result) {
+            callback(err, responseTodo);
         });
     }
 
