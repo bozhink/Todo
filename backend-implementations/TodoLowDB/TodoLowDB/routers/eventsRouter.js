@@ -10,31 +10,44 @@ module.exports = function (db) {
     router
         .get('/', function (req, res) {
             var user = req.user;
-
             if (!user) {
                 res.status(401)
                     .json('Not authorized User');
                 return;
             }
 
-            events.getEvents(user, function (events) {
+            events.getEvents(user, function (err, events) {
+                if (!!err) {
+                    res.status(400)
+                        .json(err);
+                    return;
+                }
+
                 res.json({
                     result: events
                 });
             });
         })
         .post('/', function (req, res) {
-            var usersUsernames = req.body.users || [], user = req.user;
+            var event, user = req.user;
             if (!user) {
                 res.status(401)
                     .json('Not authorized User');
                 return;
             }
 
-            events.addEvent(user, req.body.title, req.body.category, req.body.description, new Date(req.body.date), usersUsernames, function (event, err) {
+            event = {
+                title: req.body.title,
+                category: req.body.category || 'uncategorized',
+                description: req.body.description,
+                date: new Date(req.body.date),
+                usersUsernames: req.body.users || []
+            };
+
+            events.addEvent(user, event, function (err, event) {
                 if (!!err || !event) {
                     res.status(400)
-                        .json(JSON.stringify(err));
+                        .json(err);
                 }
 
                 res.status(201)

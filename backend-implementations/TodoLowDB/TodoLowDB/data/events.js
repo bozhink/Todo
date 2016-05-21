@@ -13,7 +13,7 @@ function EventDAO(db) {
             indicesToRemove = [];
 
         if (!user) {
-            callback(events, 'Not authorized User');
+            callback('Not authorized User', events);
             return;
         }
 
@@ -32,7 +32,7 @@ function EventDAO(db) {
         events = user.events || [];
         events = events.map(function (dbEvent) {
             var creator = usersCollection.find({
-                    'id': dbEvent.creatorId
+                    id: dbEvent.creatorId
                 }),
                 users = dbEvent.users.map(function (userId) {
                     var username = usersCollection.find({
@@ -58,46 +58,58 @@ function EventDAO(db) {
             return event;
         });
 
-        callback(events);
+        callback(null, events);
     }
 
-    function addEvent(user, title, category, description, date, usersUsernames, callback) {
-        var event, users;
+    function addEvent(user, event, callback) {
+        var dbEvent, users;
         if (!user) {
-            callback(null, 'Not authorized User.');
+            callback('Not authorized User', null);
             return;
         }
 
-        users = usersUsernames.map(function (username) {
+        if (!event) {
+            callback('Cannot add null event', null);
+            return;
+        }
+
+        dbEvent = {
+            id: uuid(),
+            title: event.title,
+            category: event.category || 'uncategorized',
+            description: event.description,
+            date: event.date,
+            creatorId: user.id
+        };
+
+        event.usersUsernames = event.usersUsernames || [];
+
+        users = event.usersUsernames.map(function (username) {
             return usersCollection.find({
                 usernameLower: username.toLowerCase()
             });
         }).filter((user) => !!user);
 
-        if (users.length !== usersUsernames.length) {
-            callback(null, 'Invalid users added');
+        if (users.length !== event.usersUsernames.length) {
+            callback('Invalid users added', null);
             return;
         }
 
-        users.push(user);
-        user.events = user.events || [];
+        // Add user to users if not present
+        if (!users.find((u) => u.id === user.id)) {
+            users.push(user);
+        }
 
-        event = {
-            id: uuid(),
-            title: title,
-            category: category || 'uncategorized',
-            description: description,
-            date: date,
-            creatorId: user.id,
-            users: users.map((user) => user.id)
-        };
+        dbEvent.users = users.map((user) => user.id);
 
         users.forEach(function (user) {
             user.events = user.events || [];
-            user.events.push(event);
+            user.events.push(dbEvent);
         });
 
-        callback(event);
+        db.write();
+
+        callback(null, dbEvent);
     }
 
     return {
