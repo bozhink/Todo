@@ -1,9 +1,8 @@
-var todosController = (function () {
+var todosController = (function() {
     function all(context) {
-        var todos;
-        var category = context.params.category || null;
+        var todos, category = context.params.category || null;
         data.todos.get()
-            .then(function (resTodos) {
+            .then(function(resTodos) {
                 todos = _.chain(resTodos)
                     .groupBy(controllerHelpers.groupByCategory)
                     .map(controllerHelpers.parseGroups).value();
@@ -14,54 +13,54 @@ var todosController = (function () {
 
                 return templates.get('todos');
             })
-            .then(function (template) {
+            .then(function(template) {
                 context.$element().html(template(todos));
 
-                $('.todo-box').on('change', function () {
+                $('.todo-box').on('change', function() {
                     var $checkbox = $(this).find('input');
                     var isChecked = $checkbox.prop('checked');
                     var id = $(this).attr('data-id');
                     data.todos.update(id, {
                         state: isChecked
-                    }).then(function (todo) {
+                    }).then(function(todo) {
                         toastr.clear();
-                        toastr.error(`TODO ${todo.text} updated!`);
+                        toastr.info(`TODO ${todo.text} is updated!`);
                     });
                 });
             })
-            .catch(function (err) {
-                console.log(err);
-            });
+            .catch(controllerHelpers.catchError);
     }
 
     function add(context) {
         templates.get('todo-add')
-            .then(function (template) {
+            .then(function(template) {
                 context.$element()
                     .html(template());
                 return data.categories.get();
             })
-            .then(function (categories) {
+            .then(function(categories) {
                 $('#tb-todo-category').autocomplete({
                     source: categories
                 });
-                $('#btn-todo-add').on('click', function () {
+                $('#btn-todo-add').on('click', function() {
                     var todo = {
                         text: $('#tb-todo-text').val(),
                         category: $('#tb-todo-category').val()
                     };
 
                     data.todos.add(todo)
-                        .then(function (todo) {
+                        .then(function(todo) {
                             toastr.success(`TODO "${todo.text}" added!`);
                             context.redirect('#/todos');
-                        });
+                        })
+                        .catch(controllerHelpers.catchError);
                 });
-            });
+            })
+            .catch(controllerHelpers.catchError);
     }
 
     return {
         all: all,
         add: add
     };
-} ());
+}());

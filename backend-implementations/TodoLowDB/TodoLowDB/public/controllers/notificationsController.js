@@ -1,29 +1,28 @@
-var notificationsController = (function () {
+var notificationsController = (function() {
     function all(context) {
         var notifications;
         data.notifications.get()
-            .then(function (resNotifications) {
+            .then(function(resNotifications) {
                 notifications = resNotifications;
 
                 return templates.get('notifications');
             })
-            .then(function (template) {
+            .then(function(template) {
                 context.$element().html(template(notifications));
 
-                $('.btn-confirm').on('click', function () {
+                $('.btn-confirm').on('click', function() {
                     var senderId = $(this).parents('.notification-box').attr('data-sender-id');
                     data.friends.confirm(senderId)
-                        .then(function (msg) {
+                        .then(function(msg) {
                             toastr.success(msg.message);
-                        });
+                        })
+                        .catch(controllerHelpers.catchError);;
                 });
             })
-            .catch(function (err) {
-                console.log(err);
-            });
+            .catch(controllerHelpers.catchError);
     }
 
     return {
         all: all
     };
-} ());
+}());

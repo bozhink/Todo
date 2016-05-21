@@ -1,4 +1,4 @@
-var controllerHelpers = function () {
+var controllerHelpers = function() {
     function groupByCategory(item) {
         return item.category;
     }
@@ -11,7 +11,7 @@ var controllerHelpers = function () {
     }
 
     function filterByCategory(category) {
-        return function (group) {
+        return function(group) {
             return group.category.toLowerCase() === category.toLowerCase();
         };
     }
@@ -33,7 +33,21 @@ var controllerHelpers = function () {
         return newItem;
     }
 
+    function catchError(err) {
+        if ('responseText' in err) {
+            toastr.error(err.responseText);
+        } else {
+            toastr.error(JSON.stringify(err));
+        }
+
+        console.log(err);
+    }
+
     return {
-        groupByCategory, parseGroups, filterByCategory, fixDate
+        groupByCategory,
+        parseGroups,
+        filterByCategory,
+        fixDate,
+        catchError
     };
-} ();
+}();
