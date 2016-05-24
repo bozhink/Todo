@@ -346,6 +346,10 @@
       <Project>{eebe5c84-705c-4b0b-b081-bf9e7dbfad27}</Project>
       <Name>Todos.Services.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Services\Todos.Services\Todos.Services.csproj">
+      <Project>{af7a2046-3151-44f6-8683-658982d05ad4}</Project>
+      <Name>Todos.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

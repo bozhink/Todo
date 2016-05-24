@@ -11,26 +11,29 @@
     using Todos.Data.Models;
     using Todos.Data.Repositories.Contracts;
 
+    using Todos.Services.Contracts;
+
     [Authorize]
     public class TodoController : Controller
     {
-        private readonly IApplicationDataRepository<User> usersRepository;
         private readonly IApplicationDataRepository<Todo> todoesRepository;
 
-        public TodoController(IApplicationDataRepositoryProvider<Todo> todoesRepositoryProvider, IApplicationDataRepositoryProvider<User> usersRepositoryProvider)
+        private readonly IUsersDataService usersDataService;
+
+        public TodoController(IApplicationDataRepositoryProvider<Todo> todoesRepositoryProvider, IUsersDataService usersDataService)
         {
             if (todoesRepositoryProvider == null)
             {
                 throw new ArgumentNullException(nameof(todoesRepositoryProvider));
             }
 
-            if (usersRepositoryProvider == null)
+            if (usersDataService == null)
             {
-                throw new ArgumentNullException(nameof(usersRepositoryProvider));
+                throw new ArgumentNullException(nameof(usersDataService));
             }
 
             this.todoesRepository = (IApplicationDataRepository<Todo>)todoesRepositoryProvider.Create();
-            this.usersRepository = (IApplicationDataRepository<User>)usersRepositoryProvider.Create();
+            this.usersDataService = usersDataService;
         }
 
         // GET: Todo
@@ -67,7 +70,7 @@
         // GET: Todo/Create
         public async Task<ActionResult> Create()
         {
-            var users = (await this.usersRepository.All()).ToList();
+            var users = (await this.usersDataService.GetAllUsers()).ToList();
             ViewBag.UserId = new SelectList(users, "Id", "Email");
             return this.View();
         }
@@ -86,7 +89,7 @@
                 return this.RedirectToAction(nameof(this.Index));
             }
 
-            var users = (await this.usersRepository.All()).ToList();
+            var users = (await this.usersDataService.GetAllUsers()).ToList();
             ViewBag.UserId = new SelectList(users, "Id", "Email", todo.UserId);
             return this.View(todo);
         }
@@ -108,7 +111,7 @@
                 return this.HttpNotFound();
             }
 
-            var users = (await this.usersRepository.All()).ToList();
+            var users = (await this.usersDataService.GetAllUsers()).ToList();
             ViewBag.UserId = new SelectList(users, "Id", "Email", todo.UserId);
             return this.View(todo);
         }
@@ -128,7 +131,7 @@
                 return this.RedirectToAction(nameof(this.Index));
             }
 
-            var users = (await this.usersRepository.All()).ToList();
+            var users = (await this.usersDataService.GetAllUsers()).ToList();
             ViewBag.UserId = new SelectList(users, "Id", "Email", todo.UserId);
             return this.View(todo);
         }
@@ -172,7 +175,7 @@
         {
             if (disposing)
             {
-                this.usersRepository.TryDispose();
+                this.usersDataService.TryDispose();
                 this.todoesRepository.TryDispose();
             }
 

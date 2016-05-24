@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todos.Services.Common", "Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todos.WebApplication", "Web\Todos.WebApplication\Todos.WebApplication.csproj", "{EF469468-1C92-4A1C-A871-6DAFC2A3AA01}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Todos.Services", "Services\Todos.Services\Todos.Services.csproj", "{AF7A2046-3151-44F6-8683-658982D05AD4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{EF469468-1C92-4A1C-A871-6DAFC2A3AA01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF469468-1C92-4A1C-A871-6DAFC2A3AA01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF469468-1C92-4A1C-A871-6DAFC2A3AA01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF7A2046-3151-44F6-8683-658982D05AD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF7A2046-3151-44F6-8683-658982D05AD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF7A2046-3151-44F6-8683-658982D05AD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF7A2046-3151-44F6-8683-658982D05AD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,5 +70,6 @@ Global
 		{8437237A-03DC-4A7B-9FAC-E610F8DDE893} = {1DCC8A4F-5D38-4AFB-8279-AB2602AF63A4}
 		{EEBE5C84-705C-4B0B-B081-BF9E7DBFAD27} = {906706CA-D2C3-43FB-A224-2DEEBA09BCBB}
 		{EF469468-1C92-4A1C-A871-6DAFC2A3AA01} = {9623B54B-B66D-4A79-A951-8E083DA27283}
+		{AF7A2046-3151-44F6-8683-658982D05AD4} = {906706CA-D2C3-43FB-A224-2DEEBA09BCBB}
 	EndGlobalSection
 EndGlobal
