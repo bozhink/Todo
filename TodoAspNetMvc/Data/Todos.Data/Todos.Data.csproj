@@ -79,6 +79,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationDbContext.cs" />
+    <Compile Include="Assembly.cs" />
+    <Compile Include="Contracts\IApplicationDbContextProvider.cs" />
+    <Compile Include="Contracts\IApplicationDbContextFactory.cs" />
+    <Compile Include="Factories\ApplicationDbContextFactory.cs" />
+    <Compile Include="Factories\ApplicationDbContextProvider.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -91,11 +96,16 @@
       <Project>{f9c4d565-338e-4108-b971-cf8bd7975583}</Project>
       <Name>Todos.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Todos.Data.Common\Todos.Data.Common.csproj">
+      <Project>{e5ad3c16-de98-44c2-b752-f693e1da2f0a}</Project>
+      <Name>Todos.Data.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Todos.Data.Models\Todos.Data.Models.csproj">
       <Project>{8437237a-03dc-4a7b-9fac-e610f8dde893}</Project>
       <Name>Todos.Data.Models</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

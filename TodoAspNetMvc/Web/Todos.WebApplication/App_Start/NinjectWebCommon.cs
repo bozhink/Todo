@@ -1,9 +1,10 @@
-[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(Todos.WebApplication.App_Start.NinjectWebCommon), "Start")]
-[assembly: WebActivatorEx.ApplicationShutdownMethod(typeof(Todos.WebApplication.App_Start.NinjectWebCommon), "Stop")]
+[assembly: WebActivatorEx.PreApplicationStartMethod(typeof(Todos.WebApplication.NinjectWebCommon), "Start")]
+[assembly: WebActivatorEx.ApplicationShutdownMethod(typeof(Todos.WebApplication.NinjectWebCommon), "Stop")]
 
-namespace Todos.WebApplication.App_Start
+namespace Todos.WebApplication
 {
     using System;
+    using System.Reflection;
     using System.Web;
 
     using Microsoft.Web.Infrastructure.DynamicModuleHelper;
@@ -61,6 +62,7 @@ namespace Todos.WebApplication.App_Start
         /// <param name="kernel">The kernel.</param>
         private static void RegisterServices(IKernel kernel)
         {
+            kernel.Load(Assembly.GetExecutingAssembly());
         }
     }
 }

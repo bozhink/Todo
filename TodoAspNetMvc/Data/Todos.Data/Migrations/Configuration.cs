@@ -4,7 +4,7 @@ namespace Todos.Data.Migrations
 
     using Todos.Common.Constants;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
+    public sealed class Configuration : DbMigrationsConfiguration<ApplicationDbContext>
     {
         public Configuration()
         {
