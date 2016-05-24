@@ -15,6 +15,7 @@
             this.Id = Guid.NewGuid().ToString();
             this.Category = ModelConstants.DefaultCategoryName;
             this.Date = DateTime.UtcNow;
+            this.DateCreated = DateTime.UtcNow;
             this.users = new HashSet<User>();
         }
 
@@ -32,6 +33,8 @@
         public string Category { get; set; }
 
         public DateTime Date { get; set; }
+
+        public DateTime DateCreated { get; set; }
 
         public virtual string UserId { get; set; }
 

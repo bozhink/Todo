@@ -51,8 +51,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assembly.cs" />
+    <Compile Include="Contracts\ITodoesDataService.cs" />
     <Compile Include="Contracts\IUsersDataService.cs" />
+    <Compile Include="DataServices\TodoesDataService.cs" />
     <Compile Include="DataServices\UsersDataService.cs" />
+    <Compile Include="Models\TodoServiceModel.cs" />
     <Compile Include="Models\UserServiceModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

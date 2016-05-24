@@ -3,28 +3,32 @@
     using System;
     using System.Data;
     using System.Linq;
-    using System.Threading.Tasks;
+    using System.Linq.Expressions;
     using System.Net;
-    using Microsoft.AspNet.Identity;
+    using System.Threading.Tasks;
     using System.Web.Mvc;
-    using Todos.Common.Extensions;
-    using Todos.Data.Models;
-    using Todos.Data.Repositories.Contracts;
 
+    using Constants;
+
+    using Microsoft.AspNet.Identity;
+
+    using Todos.Common.Extensions;
     using Todos.Services.Contracts;
+    using Todos.Services.Models;
+
+    using ViewModels.Todo;
 
     [Authorize]
     public class TodoController : Controller
     {
-        private readonly IApplicationDataRepository<Todo> todoesRepository;
-
         private readonly IUsersDataService usersDataService;
+        private readonly ITodoesDataService todoesDataService;
 
-        public TodoController(IApplicationDataRepositoryProvider<Todo> todoesRepositoryProvider, IUsersDataService usersDataService)
+        public TodoController(ITodoesDataService todoesDataService, IUsersDataService usersDataService)
         {
-            if (todoesRepositoryProvider == null)
+            if (todoesDataService == null)
             {
-                throw new ArgumentNullException(nameof(todoesRepositoryProvider));
+                throw new ArgumentNullException(nameof(todoesDataService));
             }
 
             if (usersDataService == null)
@@ -32,128 +36,190 @@
                 throw new ArgumentNullException(nameof(usersDataService));
             }
 
-            this.todoesRepository = (IApplicationDataRepository<Todo>)todoesRepositoryProvider.Create();
+            this.todoesDataService = todoesDataService;
             this.usersDataService = usersDataService;
         }
+
+        private Expression<Func<TodoServiceModel, TodoViewModel>> MapServiceToViewModel => t => new TodoViewModel
+        {
+            Id = t.Id,
+            Category = t.Category,
+            State = t.State,
+            Text = t.Text,
+            UserId = t.UserId
+        };
+
+        private Func<TodoViewModel, TodoServiceModel> MapViewToServiceModel => t => new TodoServiceModel
+        {
+            Id = t.Id,
+            Category = t.Category,
+            State = t.State,
+            Text = t.Text,
+            UserId = t.UserId
+        };
 
         // GET: Todo
         public async Task<ActionResult> Index()
         {
-            var userId = User.Identity.GetUserId();
-            var todoes = (await this.todoesRepository.All())
-                .Where(t => t.UserId == userId)
-                .ToList();
+            try
+            {
+                var userId = User.Identity.GetUserId();
+                var todoes = (await this.todoesDataService.Get(0, 10, userId))
+                    .Select(this.MapServiceToViewModel)
+                    .ToList();
 
-            return this.View(todoes);
+                return this.View(todoes);
+            }
+            catch
+            {
+                return this.View(ViewConstants.ErrorViewName);
+            }
         }
 
         // GET: Todo/Details/5
         public async Task<ActionResult> Details(string id)
         {
-            if (id == null)
+            if (string.IsNullOrWhiteSpace(id))
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var userId = User.Identity.GetUserId();
-            var todo = (await this.todoesRepository.All())
-                .FirstOrDefault(t => t.UserId == userId && t.Id == id);
-
-            if (todo == null)
+            try
             {
-                return this.HttpNotFound();
-            }
+                var todo = await this.GetViewModelById(id);
 
-            return this.View(todo);
+                if (todo == null)
+                {
+                    return this.HttpNotFound();
+                }
+
+                return this.View(todo);
+            }
+            catch
+            {
+                return this.View(ViewConstants.ErrorViewName);
+            }
         }
 
         // GET: Todo/Create
         public async Task<ActionResult> Create()
         {
-            var users = (await this.usersDataService.GetAllUsers()).ToList();
-            ViewBag.UserId = new SelectList(users, "Id", "Email");
-            return this.View();
+            try
+            {
+                var users = (await this.usersDataService.GetAllUsers()).ToList();
+                ViewBag.UserId = new SelectList(users, "Id", "Email");
+                return this.View();
+            }
+            catch
+            {
+                return this.View(ViewConstants.ErrorViewName);
+            }
         }
 
         // POST: Todo/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Text,Category,State,UserId")] Todo todo)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Text,Category,State,UserId")] TodoViewModel todo)
         {
-            if (ModelState.IsValid)
+            try
             {
-                await this.todoesRepository.Add(todo);
-                await this.todoesRepository.SaveChanges();
-                return this.RedirectToAction(nameof(this.Index));
-            }
+                if (ModelState.IsValid)
+                {
+                    var userId = User.Identity.GetUserId();
+                    var serviceModel = this.MapViewToServiceModel.Invoke(todo);
+                    await this.todoesDataService.Add(serviceModel, userId);
+                    return this.RedirectToAction(nameof(this.Index));
+                }
 
-            var users = (await this.usersDataService.GetAllUsers()).ToList();
-            ViewBag.UserId = new SelectList(users, "Id", "Email", todo.UserId);
-            return this.View(todo);
+                var users = (await this.usersDataService.GetAllUsers()).ToList();
+                ViewBag.UserId = new SelectList(users, "Id", "Email", todo.UserId);
+                return this.View(todo);
+            }
+            catch
+            {
+                return this.View(ViewConstants.ErrorViewName);
+            }
         }
 
         // GET: Todo/Edit/5
         public async Task<ActionResult> Edit(string id)
         {
-            if (id == null)
+            if (string.IsNullOrWhiteSpace(id))
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var userId = User.Identity.GetUserId();
-            var todo = (await this.todoesRepository.All())
-                .FirstOrDefault(t => t.UserId == userId && t.Id == id);
-
-            if (todo == null)
+            try
             {
-                return this.HttpNotFound();
-            }
+                var todo = await this.GetViewModelById(id);
 
-            var users = (await this.usersDataService.GetAllUsers()).ToList();
-            ViewBag.UserId = new SelectList(users, "Id", "Email", todo.UserId);
-            return this.View(todo);
+                if (todo == null)
+                {
+                    return this.HttpNotFound();
+                }
+
+                var users = (await this.usersDataService.GetAllUsers()).ToList();
+                ViewBag.UserId = new SelectList(users, "Id", "Email", todo.UserId);
+                return this.View(todo);
+            }
+            catch
+            {
+                return this.View(ViewConstants.ErrorViewName);
+            }
         }
 
         // POST: Todo/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Text,Category,State,UserId")] Todo todo)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Text,Category,State,UserId")] TodoViewModel todo)
         {
-            if (ModelState.IsValid)
+            try
             {
-                await this.todoesRepository.Update(todo);
-                await this.todoesRepository.SaveChanges();
+                if (ModelState.IsValid)
+                {
+                    var userId = User.Identity.GetUserId();
+                    var serviceModel = this.MapViewToServiceModel.Invoke(todo);
+                    await this.todoesDataService.Update(serviceModel, userId);
+                    return this.RedirectToAction(nameof(this.Index));
+                }
 
-                return this.RedirectToAction(nameof(this.Index));
+                var users = (await this.usersDataService.GetAllUsers()).ToList();
+                ViewBag.UserId = new SelectList(users, "Id", "Email", todo.UserId);
+                return this.View(todo);
             }
-
-            var users = (await this.usersDataService.GetAllUsers()).ToList();
-            ViewBag.UserId = new SelectList(users, "Id", "Email", todo.UserId);
-            return this.View(todo);
+            catch
+            {
+                return this.View(ViewConstants.ErrorViewName);
+            }
         }
 
         // GET: Todo/Delete/5
         public async Task<ActionResult> Delete(string id)
         {
-            if (id == null)
+            if (string.IsNullOrWhiteSpace(id))
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var userId = User.Identity.GetUserId();
-            var todo = (await this.todoesRepository.All())
-                .FirstOrDefault(t => t.UserId == userId && t.Id == id);
-
-            if (todo == null)
+            try
             {
-                return this.HttpNotFound();
-            }
+                var todo = await this.GetViewModelById(id);
 
-            return this.View(todo);
+                if (todo == null)
+                {
+                    return this.HttpNotFound();
+                }
+
+                return this.View(todo);
+            }
+            catch
+            {
+                return this.View(ViewConstants.ErrorViewName);
+            }
         }
 
         // POST: Todo/Delete/5
@@ -161,14 +227,21 @@
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(string id)
         {
-            var userId = User.Identity.GetUserId();
-            var todo = (await this.todoesRepository.All())
-                .FirstOrDefault(t => t.UserId == userId && t.Id == id);
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
 
-            await this.todoesRepository.Delete(todo);
-            await this.todoesRepository.SaveChanges();
-
-            return this.RedirectToAction(nameof(this.Index));
+            try
+            {
+                var userId = User.Identity.GetUserId();
+                await this.todoesDataService.Delete(id, userId);
+                return this.RedirectToAction(nameof(this.Index));
+            }
+            catch
+            {
+                return this.View(ViewConstants.ErrorViewName);
+            }
         }
 
         protected override void Dispose(bool disposing)
@@ -176,10 +249,18 @@
             if (disposing)
             {
                 this.usersDataService.TryDispose();
-                this.todoesRepository.TryDispose();
+                this.todoesDataService.TryDispose();
             }
 
             base.Dispose(disposing);
+        }
+
+        private async Task<TodoViewModel> GetViewModelById(string id)
+        {
+            var userId = User.Identity.GetUserId();
+            var todo = this.MapServiceToViewModel.Compile()
+                .Invoke(await this.todoesDataService.GetById(id, userId));
+            return todo;
         }
     }
 }

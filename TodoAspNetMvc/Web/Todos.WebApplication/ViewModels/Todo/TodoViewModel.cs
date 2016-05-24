@@ -1,21 +1,19 @@
-﻿namespace Todos.Data.Models
+﻿namespace Todos.WebApplication.ViewModels.Todo
 {
     using System;
     using System.ComponentModel.DataAnnotations;
 
     using Todos.Common.Constants;
 
-    public class Todo
+    public class TodoViewModel
     {
-        public Todo()
+        public TodoViewModel()
         {
             this.Id = Guid.NewGuid().ToString();
             this.Category = ModelConstants.DefaultCategoryName;
             this.State = false;
-            this.DateCreated = DateTime.UtcNow;
         }
 
-        [Key]
         public string Id { get; set; }
 
         [Required]
@@ -25,12 +23,8 @@
         [MaxLength(ModelConstants.MaximalLengthOfCategoryName)]
         public string Category { get; set; }
 
-        public DateTime DateCreated { get; set; }
-
         public bool State { get; set; }
 
         public virtual string UserId { get; set; }
-
-        public virtual User User { get; set; }
     }
 }

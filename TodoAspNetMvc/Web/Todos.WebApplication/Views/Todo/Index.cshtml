@@ -1,6 +1,6 @@
-﻿@using Todos.Data.Models
-@using Todos.WebApplication.Controllers
-@model IEnumerable<Todo>
+﻿@using Todos.WebApplication.Controllers
+@using Todos.WebApplication.ViewModels.Todo
+@model IEnumerable<TodoViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -13,9 +13,6 @@
 </p>
 <table class="table">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.User.Email)
-        </th>
         <th>
             @Html.DisplayNameFor(model => model.Text)
         </th>
@@ -31,9 +28,6 @@
     @foreach (var item in Model)
     {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.Email)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Text)
             </td>

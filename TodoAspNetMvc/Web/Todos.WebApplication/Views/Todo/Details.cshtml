@@ -1,6 +1,6 @@
-﻿@using Todos.Data.Models
-@using Todos.WebApplication.Controllers
-@model Todo
+﻿@using Todos.WebApplication.Controllers
+@using Todos.WebApplication.ViewModels.Todo
+@model TodoViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -12,14 +12,6 @@
     <h4>Todo</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.User.Email)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.User.Email)
-        </dd>
-
         <dt>
             @Html.DisplayNameFor(model => model.Text)
         </dt>
