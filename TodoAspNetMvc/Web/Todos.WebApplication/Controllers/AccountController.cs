@@ -142,7 +142,7 @@
                     return this.View("ExternalLoginFailure");
                 }
 
-                var user = new ApplicationUser
+                var user = new User
                 {
                     UserName = model.Email,
                     Email = model.Email
@@ -284,7 +284,7 @@
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser
+                var user = new User
                 {
                     UserName = model.Email,
                     Email = model.Email

@@ -1,14 +1,21 @@
 ﻿namespace Todos.Data
 {
+    using System.Data.Entity;
     using Microsoft.AspNet.Identity.EntityFramework;
     using Models;
 
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    using Todos.Common.Constants;
+
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext()
-            : base("DefaultConnection", throwIfV1Schema: false)
+            : base(DataConstants.DefaultConnectionKey, throwIfV1Schema: false)
         {
         }
+
+        public IDbSet<Todo> Todos { get; set; }
+
+        public IDbSet<Event> Events { get; set; }
 
         public static ApplicationDbContext Create()
         {

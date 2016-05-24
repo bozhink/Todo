@@ -79,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationDbContext.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -86,6 +87,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Todos.Common\Todos.Common.csproj">
+      <Project>{f9c4d565-338e-4108-b971-cf8bd7975583}</Project>
+      <Name>Todos.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Todos.Data.Models\Todos.Data.Models.csproj">
       <Project>{8437237a-03dc-4a7b-9fac-e610f8dde893}</Project>
       <Name>Todos.Data.Models</Name>
