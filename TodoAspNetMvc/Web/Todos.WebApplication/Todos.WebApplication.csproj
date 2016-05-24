@@ -217,7 +217,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
-    <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -299,6 +298,28 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\jquery-2.2.3.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Todos.Common\Todos.Common.csproj">
+      <Project>{f9c4d565-338e-4108-b971-cf8bd7975583}</Project>
+      <Name>Todos.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Data\Todos.Data.Common\Todos.Data.Common.csproj">
+      <Project>{e5ad3c16-de98-44c2-b752-f693e1da2f0a}</Project>
+      <Name>Todos.Data.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Data\Todos.Data.Models\Todos.Data.Models.csproj">
+      <Project>{8437237a-03dc-4a7b-9fac-e610f8dde893}</Project>
+      <Name>Todos.Data.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Data\Todos.Data\Todos.Data.csproj">
+      <Project>{a2800b07-edea-4b8b-b2e6-2eb88e9cbeb9}</Project>
+      <Name>Todos.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\Todos.Services.Common\Todos.Services.Common.csproj">
+      <Project>{eebe5c84-705c-4b0b-b081-bf9e7dbfad27}</Project>
+      <Name>Todos.Services.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
