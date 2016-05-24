@@ -35,6 +35,8 @@
   <ItemGroup>
     <Compile Include="Constants\DataConstants.cs" />
     <Compile Include="Constants\ModelConstants.cs" />
+    <Compile Include="Extensions\DisposableExtensions.cs" />
+    <Compile Include="Extensions\DisposeStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
