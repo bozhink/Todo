@@ -9,26 +9,26 @@
     // You can add profile data for the user by adding more properties to your ApplicationUser class, please visit http://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class User : IdentityUser
     {
-        private ICollection<Todo> todos;
+        private ICollection<Todo> todoes;
         private ICollection<Event> events;
 
         public User()
             : base()
         {
-            this.todos = new HashSet<Todo>();
+            this.todoes = new HashSet<Todo>();
             this.events = new HashSet<Event>();
         }
 
-        public virtual ICollection<Todo> Todos
+        public virtual ICollection<Todo> Todoes
         {
             get
             {
-                return this.todos;
+                return this.todoes;
             }
 
             set
             {
-                this.todos = value;
+                this.todoes = value;
             }
         }
 

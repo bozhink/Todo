@@ -13,7 +13,7 @@
         {
         }
 
-        public IDbSet<Todo> Todos { get; set; }
+        public IDbSet<Todo> Todoes { get; set; }
 
         public IDbSet<Event> Events { get; set; }
 
