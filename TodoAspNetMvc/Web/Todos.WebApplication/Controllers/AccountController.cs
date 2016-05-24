@@ -10,7 +10,7 @@
     using Microsoft.Owin.Security;
 
     using Todos.Data.Models;
-    using Todos.WebApplication.Models;
+    using Todos.WebApplication.ViewModels.Account;
 
     [Authorize]
     public class AccountController : Controller

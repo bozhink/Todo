@@ -9,7 +9,7 @@
     using Microsoft.AspNet.Identity.Owin;
     using Microsoft.Owin.Security;
 
-    using Todos.WebApplication.Models;
+    using Todos.WebApplication.ViewModels.Manage;
 
     [Authorize]
     public class ManageController : Controller
