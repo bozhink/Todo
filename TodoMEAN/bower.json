@@ -1,0 +1,38 @@
+{
+  "name": "todo-mean",
+  "description": "Todo with MEAN",
+  "main": "app.js",
+  "authors": [
+    "Bozhin Karaivanov"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "store",
+    "NodeJS",
+    "MongoDB"
+  ],
+  "homepage": "https://github.com/bozhink/todo",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "public/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.1.1",
+    "bootstrap": "^3.3.7",
+    "jquery-validation": "^1.15.1",
+    "jquery-validation-unobtrusive": "^3.2.6",
+    "angular": "^1.5.8",
+    "cryptojslib": "^3.1.2",
+    "handlebars": "^4.0.5",
+    "jquery-ui": "^1.12.1",
+    "jt.timepicker": "^1.11.7",
+    "lodash": "^4.17.2",
+    "moment": "^2.16.0",
+    "toastr": "^2.1.3",
+    "cryptojs-sha1": "^1.0.0"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "name": "todo-mean",
+  "version": "0.0.1",
+  "description": "Todo with MEAN",
+  "main": "app.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha public/tests/",
+    "test-kitten": "mocha -R nyan public/tests/",
+    "watch": "gulp watch",
+    "build": "gulp build",
+    "continuous-build": "gulp continuous-build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bozhink/todo.git"
+  },
+  "keywords": [
+    "todo",
+    "NodeJS",
+    "MongoDB"
+  ],
+  "author": "Bozhin Karaivanov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bozhink/todo/issues"
+  },
+  "homepage": "https://github.com/bozhink/todo#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "bower": "^1.8.0",
+    "crypto-js": "^3.1.8",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "http-status": "^0.2.3",
+    "lodash": "^4.17.2",
+    "mongodb": "^2.2.11",
+    "mongoose": "^4.6.8",
+    "morgan": "^1.7.0",
+    "passport": "^0.3.2",
+    "passport-facebook": "^2.1.1",
+    "passport-http": "^0.3.0",
+    "passport-http-bearer": "^1.0.1",
+    "passport-local": "^1.0.0",
+    "passport-twitter": "^1.0.4",
+    "pug": "^2.0.0-beta6",
+    "stripe": "^4.12.0",
+    "superagent": "^2.3.0",
+    "underscore": "^1.8.3",
+    "uuid": "^2.0.3",
+    "wagner-core": "^0.2.0"
+  },
+  "devDependencies": {
+    "browserify": "^13.1.1",
+    "chai": "^3.5.0",
+    "eslint": "^3.10.2",
+    "gulp": "^3.9.1",
+    "gulp-browserify": "^0.5.1",
+    "gulp-clean-css": "^2.0.13",
+    "gulp-less": "^3.3.0",
+    "gulp-minify": "0.0.14",
+    "gulp-mocha": "^3.0.1",
+    "jquery": "^3.1.1",
+    "mocha": "^3.1.2",
+    "sinon": "^1.17.6"
+  }
+}
