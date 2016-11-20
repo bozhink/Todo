@@ -33,6 +33,7 @@
     "lodash": "^4.17.2",
     "moment": "^2.16.0",
     "toastr": "^2.1.3",
-    "cryptojs-sha1": "^1.0.0"
+    "cryptojs-sha1": "^1.0.0",
+    "angular-route": "^1.5.8"
   }
 }

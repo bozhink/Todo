@@ -1,0 +1,16 @@
+<h2>TODOs</h2>
+<a href="#/todos/add">Add new</a>
+<!--<div ng-repeat="todo in todos">
+    <h3><a href="#/todos?category={{todo.category}}">{{todo.category}}</a></h3>
+    <div ng-repeat="item in todo.items" class="todo-box" data-id="{{item.id}}">
+        <label class="checkbox">
+                <input type="checkbox" ng-model="item.state" />
+                <strong>{{item.text}}</strong>
+            </label>
+    </div>
+</div>-->
+<button ng-click="add()">Add</button>
+<div ng-repeat="todo in todos">
+    {{todo}}
+</div>
+<div  ng-init="add()"></div>

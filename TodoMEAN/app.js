@@ -1,13 +1,17 @@
 var express = require('express'),
     app = express(),
+    wagner = require('wagner-core'),
+    morgan = require('morgan')(),
     bodyParser = require('body-parser'),
     MongoClient = require('mongodb').MongoClient,
     assert = require('assert');
 
+app.use(morgan);
 app.use(bodyParser.json());
 
 app.use(express.static('public'));
-app.use('/bower_components', express.static(__dirname + '/bower_components'));
+app.use('/lib', express.static(__dirname + '/bower_components'));
+app.use('/css', express.static(__dirname + '/public/css'));
 
 MongoClient.connect('mongodb://localhost:27017/todos', function(err, db) {
     assert.equal(null, err);

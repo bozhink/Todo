@@ -1,25 +1,26 @@
-var jsonRequester = (function () {
+function JsonRequester($http) {
     function send(method, url, options) {
+        var headers, data, request, promise;
+
+        if (!url) {
+            throw 'URL should not be null';
+        }
+
         options = options || {};
 
-        var headers = options.headers || {},
-            data = options.data || undefined;
+        headers = options.headers || {};
+        headers['Content-Type'] = 'application/json';
 
-        var promise = new Promise(function (resolve, reject) {
-            $.ajax({
-                url: url,
-                method: method,
-                contentType: 'application/json',
-                headers: headers,
-                data: JSON.stringify(data),
-                success: function (res) {
-                    resolve(res);
-                },
-                error: function (err) {
-                    reject(err);
-                }
-            });
-        });
+        data = options.data || undefined;
+
+        request = {
+            method: method,
+            url: url,
+            headers: headers,
+            data: data
+        };
+
+        promise = $http(request);
 
         return promise;
     }
@@ -37,14 +38,13 @@ var jsonRequester = (function () {
     }
 
     function del(url, options) {
-        return send('POST', url, options);
+        return send('DELETE', url, options);
     }
 
     return {
-        send: send,
         get: get,
         post: post,
         put: put,
         delete: del
     };
-} ());
+}

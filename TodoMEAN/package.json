@@ -4,7 +4,7 @@
   "description": "Todo with MEAN",
   "main": "app.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node app.js",
     "test": "mocha public/tests/",
     "test-kitten": "mocha -R nyan public/tests/",
     "watch": "gulp watch",
